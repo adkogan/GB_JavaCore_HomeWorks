@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TemperatureValue {
     @JsonProperty("Value")
-    public float value;
+    public double value;
     @JsonProperty("Unit")
     public String unit;
 

@@ -6,13 +6,18 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
 
 public class MainApp {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, SQLException {
+
 
         String token = "";
         try (InputStream input = new FileInputStream("config.properties")) {
@@ -60,6 +65,13 @@ public class MainApp {
 
         WeatherResponse weatherResponse = objectMapper.readValue(jsonResponse, WeatherResponse.class);
 
+
+        WeatherRepository weatherRepository = new WeatherRepository();
+
+
+
+
+
         for (DailyForecast forecast : weatherResponse.forecasts) {
             System.out.println(
                     String.format(
@@ -70,17 +82,25 @@ public class MainApp {
                             forecast.night.printable(),
                             forecast.temperature.minimum.printable(),
                             forecast.temperature.maximum.printable()
-
                     )
             );
-
-
-
-
+            weatherRepository
+                .saveWeatherData(
+                    new WeatherRecord(
+                        "Санкт-Петербург",
+                            forecast.date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                            forecast.day.printable(),
+                            forecast.temperature.maximum.value
+                    )
+                );
         }
-
-
     }
+
+
+
+    private static void performDropTable(Statement statement) {
+    }
+
 }
 
 
